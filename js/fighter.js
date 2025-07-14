@@ -8,6 +8,7 @@ class Fighter {
         this.color = color;
         this.facing = facing;
         this.isAttacking = false;
+        this.attackCooldown = false;
         this.attackBox = {
             position: {
                 x: this.position.x,
@@ -38,11 +39,30 @@ class Fighter {
         }
     }
 
-    update(ctx) {
+    update(ctx, opponent) {
         this.draw(ctx);
 
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
+        // Update position
+        const nextX = this.position.x + this.velocity.x;
+        const nextY = this.position.y + this.velocity.y;
+
+        // Check horizontal collision with opponent
+        const wouldCollide = rectangularCollision(
+            { 
+                x: nextX, 
+                y: this.position.y, 
+                width: this.width, 
+                height: this.height 
+            },
+            opponent
+        );
+
+        // Only update X position if there's no collision
+        if (!wouldCollide) {
+            this.position.x = nextX;
+        }
+
+        this.position.y = nextY;
 
         // Apply gravity
         if (this.position.y + this.height + this.velocity.y >= GAME_CONFIG.canvas.height) {
@@ -57,17 +77,33 @@ class Fighter {
         if (this.position.x + this.width > GAME_CONFIG.canvas.width) {
             this.position.x = GAME_CONFIG.canvas.width - this.width;
         }
+
+        // Update attack box position
+        this.attackBox.position = {
+            x: this.facing === 'right' ? this.position.x + this.width : this.position.x - this.attackBox.width,
+            y: this.position.y + this.height * 0.3
+        };
     }
 
     attack() {
-        this.isAttacking = true;
-        setTimeout(() => {
-            this.isAttacking = false;
-        }, 100);
+        if (!this.attackCooldown) {
+            this.isAttacking = true;
+            this.attackCooldown = true;
+            
+            // Attack duration
+            setTimeout(() => {
+                this.isAttacking = false;
+            }, 100);
+
+            // Attack cooldown
+            setTimeout(() => {
+                this.attackCooldown = false;
+            }, 500);
+        }
     }
 
     takeHit() {
-        this.health -= 10;
+        this.health -= 20;
         if (this.health < 0) this.health = 0;
     }
 } 

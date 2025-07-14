@@ -27,14 +27,16 @@ const keys = {
     ArrowUp: { pressed: false }
 };
 
+let gameOver = false;
+
 function animate() {
     window.requestAnimationFrame(animate);
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Update players
-    player1.update(ctx);
-    player2.update(ctx);
+    // Update players with opponent reference for collision
+    player1.update(ctx, player2);
+    player2.update(ctx, player1);
 
     // Player 1 movement
     player1.velocity.x = 0;
@@ -56,7 +58,7 @@ function animate() {
         player2.facing = 'right';
     }
 
-    // Detect collision
+    // Detect attacks
     if (player1.isAttacking && rectangularCollision(player1.attackBox, player2)) {
         player1.isAttacking = false;
         player2.takeHit();
@@ -70,45 +72,48 @@ function animate() {
     }
 
     // Check for game over
-    if (player1.health <= 0 || player2.health <= 0) {
+    if (!gameOver && (player1.health <= 0 || player2.health <= 0)) {
+        gameOver = true;
         determineWinner(player1, player2, document.getElementById('gameStatus'));
     }
 }
 
 // Event listeners
 window.addEventListener('keydown', (event) => {
-    switch (event.code) {
-        // Player 1 controls
-        case GAME_CONFIG.controls.player1.left:
-            keys.a.pressed = true;
-            break;
-        case GAME_CONFIG.controls.player1.right:
-            keys.d.pressed = true;
-            break;
-        case GAME_CONFIG.controls.player1.jump:
-            if (player1.velocity.y === 0) {
-                player1.velocity.y = GAME_CONFIG.fighter.jumpForce;
-            }
-            break;
-        case GAME_CONFIG.controls.player1.attack:
-            player1.attack();
-            break;
+    if (!gameOver) {
+        switch (event.code) {
+            // Player 1 controls
+            case GAME_CONFIG.controls.player1.left:
+                keys.a.pressed = true;
+                break;
+            case GAME_CONFIG.controls.player1.right:
+                keys.d.pressed = true;
+                break;
+            case GAME_CONFIG.controls.player1.jump:
+                if (player1.velocity.y === 0) {
+                    player1.velocity.y = GAME_CONFIG.fighter.jumpForce;
+                }
+                break;
+            case GAME_CONFIG.controls.player1.attack:
+                player1.attack();
+                break;
 
-        // Player 2 controls
-        case GAME_CONFIG.controls.player2.left:
-            keys.ArrowLeft.pressed = true;
-            break;
-        case GAME_CONFIG.controls.player2.right:
-            keys.ArrowRight.pressed = true;
-            break;
-        case GAME_CONFIG.controls.player2.jump:
-            if (player2.velocity.y === 0) {
-                player2.velocity.y = GAME_CONFIG.fighter.jumpForce;
-            }
-            break;
-        case GAME_CONFIG.controls.player2.attack:
-            player2.attack();
-            break;
+            // Player 2 controls
+            case GAME_CONFIG.controls.player2.left:
+                keys.ArrowLeft.pressed = true;
+                break;
+            case GAME_CONFIG.controls.player2.right:
+                keys.ArrowRight.pressed = true;
+                break;
+            case GAME_CONFIG.controls.player2.jump:
+                if (player2.velocity.y === 0) {
+                    player2.velocity.y = GAME_CONFIG.fighter.jumpForce;
+                }
+                break;
+            case GAME_CONFIG.controls.player2.attack:
+                player2.attack();
+                break;
+        }
     }
 });
 
