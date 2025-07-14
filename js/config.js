@@ -4,10 +4,10 @@ const GAME_CONFIG = {
         height: 576
     },
     fighter: {
-        width: 100,     // Increased width for bigger stickman
-        height: 200,    // Increased height for bigger stickman
-        speed: 7,       // Kept the same speed
-        jumpForce: -20, // Kept the same jump force
+        width: 80,      // Adjusted for better proportions
+        height: 160,    // Adjusted for better proportions
+        speed: 6,       // Slightly reduced for better control
+        jumpForce: -18, // Adjusted jump height
         gravity: 0.7,
         maxHealth: 100
     },
