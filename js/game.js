@@ -5,14 +5,14 @@ canvas.width = GAME_CONFIG.canvas.width;
 canvas.height = GAME_CONFIG.canvas.height;
 
 const player1 = new Fighter({
-    position: { x: 200, y: 100 },
+    position: { x: 200, y: 50 },  // Adjusted Y position for taller stickmen
     velocity: { x: 0, y: 0 },
     color: '#ff4444',
     facing: 'right'
 });
 
 const player2 = new Fighter({
-    position: { x: 700, y: 100 },
+    position: { x: 700, y: 50 },  // Adjusted Y position for taller stickmen
     velocity: { x: 0, y: 0 },
     color: '#4444ff',
     facing: 'left'

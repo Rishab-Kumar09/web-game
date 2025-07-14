@@ -15,29 +15,31 @@ class Fighter {
                 x: this.position.x,
                 y: this.position.y
             },
-            width: 80,
-            height: 50
+            width: 120,  // Increased attack range
+            height: 60   // Increased attack height
         };
     }
 
     drawStickman(ctx) {
-        const headRadius = 15;
-        const bodyLength = 40;
-        const limbLength = 30;
+        const headRadius = 25;  // Increased head size
+        const bodyLength = 70;  // Increased body length
+        const limbLength = 50;  // Increased limb length
         
         // Calculate center position for the stickman
         const centerX = this.position.x + this.width / 2;
-        const headY = this.position.y + headRadius;
+        const headY = this.position.y + headRadius + 20; // Adjusted for bigger head
         
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = 4;
-        
-        // Draw head
+        // Draw filled head
         ctx.beginPath();
         ctx.arc(centerX, headY, headRadius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.strokeStyle = 'white';  // White outline for contrast
+        ctx.lineWidth = 4;
         ctx.stroke();
         
         // Draw body
+        ctx.strokeStyle = this.color;
         ctx.beginPath();
         ctx.moveTo(centerX, headY + headRadius);
         ctx.lineTo(centerX, headY + headRadius + bodyLength);
@@ -45,20 +47,20 @@ class Fighter {
         
         // Draw legs
         const hipY = headY + headRadius + bodyLength;
-        // Left leg with animation
+        // Left leg
         ctx.beginPath();
         ctx.moveTo(centerX, hipY);
-        ctx.lineTo(centerX - 15, hipY + limbLength);
+        ctx.lineTo(centerX - 25, hipY + limbLength);
         ctx.stroke();
         
-        // Right leg with animation
+        // Right leg
         ctx.beginPath();
         ctx.moveTo(centerX, hipY);
-        ctx.lineTo(centerX + 15, hipY + limbLength);
+        ctx.lineTo(centerX + 25, hipY + limbLength);
         ctx.stroke();
         
         // Draw arms
-        const shoulderY = headY + headRadius + 15;
+        const shoulderY = headY + headRadius + 20;
         
         // Attack animation for arms
         if (this.isAttacking) {
@@ -67,37 +69,37 @@ class Fighter {
                 // Left arm normal
                 ctx.beginPath();
                 ctx.moveTo(centerX, shoulderY);
-                ctx.lineTo(centerX - 20, shoulderY + 20);
+                ctx.lineTo(centerX - 30, shoulderY + 30);
                 ctx.stroke();
                 
                 // Right arm attacking
                 ctx.beginPath();
                 ctx.moveTo(centerX, shoulderY);
-                ctx.lineTo(centerX + 40, shoulderY);
+                ctx.lineTo(centerX + 60, shoulderY);
                 ctx.stroke();
             } else {
                 // Right arm normal
                 ctx.beginPath();
                 ctx.moveTo(centerX, shoulderY);
-                ctx.lineTo(centerX + 20, shoulderY + 20);
+                ctx.lineTo(centerX + 30, shoulderY + 30);
                 ctx.stroke();
                 
                 // Left arm attacking
                 ctx.beginPath();
                 ctx.moveTo(centerX, shoulderY);
-                ctx.lineTo(centerX - 40, shoulderY);
+                ctx.lineTo(centerX - 60, shoulderY);
                 ctx.stroke();
             }
         } else {
             // Normal arm position
             ctx.beginPath();
             ctx.moveTo(centerX, shoulderY);
-            ctx.lineTo(centerX - 20, shoulderY + 20);
+            ctx.lineTo(centerX - 30, shoulderY + 30);
             ctx.stroke();
             
             ctx.beginPath();
             ctx.moveTo(centerX, shoulderY);
-            ctx.lineTo(centerX + 20, shoulderY + 20);
+            ctx.lineTo(centerX + 30, shoulderY + 30);
             ctx.stroke();
         }
     }
