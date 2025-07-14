@@ -1,0 +1,70 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Press Start 2P', system-ui, -apple-system, sans-serif;
+}
+
+.game-container {
+    position: relative;
+    width: 1024px;
+    height: 576px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+#gameCanvas {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+
+.game-ui {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.health-bars {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.health-bar {
+    width: 400px;
+    height: 30px;
+    background: #333;
+    border: 3px solid #fff;
+    position: relative;
+}
+
+.health-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: #ff3333;
+    transition: width 0.3s ease;
+}
+
+#gameStatus {
+    text-align: center;
+    color: #fff;
+    font-size: 24px;
+    text-shadow: 2px 2px #000;
+    margin-top: 20px;
+} 
