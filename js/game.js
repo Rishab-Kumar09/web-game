@@ -5,14 +5,14 @@ canvas.width = GAME_CONFIG.canvas.width;
 canvas.height = GAME_CONFIG.canvas.height;
 
 const player1 = new Fighter({
-    position: { x: 100, y: 0 },
+    position: { x: 200, y: 100 },
     velocity: { x: 0, y: 0 },
     color: '#ff4444',
     facing: 'right'
 });
 
 const player2 = new Fighter({
-    position: { x: 800, y: 0 },
+    position: { x: 700, y: 100 },
     velocity: { x: 0, y: 0 },
     color: '#4444ff',
     facing: 'left'
@@ -29,12 +29,34 @@ const keys = {
 
 let gameOver = false;
 
+function checkAttackHit(attacker, defender) {
+    if (!attacker.isAttacking) return false;
+    
+    const attackBox = {
+        x: attacker.facing === 'right' 
+            ? attacker.position.x + attacker.width 
+            : attacker.position.x - attacker.attackBox.width,
+        y: attacker.position.y + attacker.height * 0.3,
+        width: attacker.attackBox.width,
+        height: attacker.attackBox.height
+    };
+
+    const defenderBox = {
+        x: defender.position.x,
+        y: defender.position.y,
+        width: defender.width,
+        height: defender.height
+    };
+
+    return rectangularCollision(attackBox, defenderBox);
+}
+
 function animate() {
     window.requestAnimationFrame(animate);
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Update players with opponent reference for collision
+    // Update players
     player1.update(ctx, player2);
     player2.update(ctx, player1);
 
@@ -42,30 +64,26 @@ function animate() {
     player1.velocity.x = 0;
     if (keys.a.pressed) {
         player1.velocity.x = -GAME_CONFIG.fighter.speed;
-        player1.facing = 'left';
     } else if (keys.d.pressed) {
         player1.velocity.x = GAME_CONFIG.fighter.speed;
-        player1.facing = 'right';
     }
 
     // Player 2 movement
     player2.velocity.x = 0;
     if (keys.ArrowLeft.pressed) {
         player2.velocity.x = -GAME_CONFIG.fighter.speed;
-        player2.facing = 'left';
     } else if (keys.ArrowRight.pressed) {
         player2.velocity.x = GAME_CONFIG.fighter.speed;
-        player2.facing = 'right';
     }
 
     // Detect attacks
-    if (player1.isAttacking && rectangularCollision(player1.attackBox, player2)) {
+    if (checkAttackHit(player1, player2)) {
         player1.isAttacking = false;
         player2.takeHit();
         updateHealthBar(player2, 'player2Health');
     }
 
-    if (player2.isAttacking && rectangularCollision(player2.attackBox, player1)) {
+    if (checkAttackHit(player2, player1)) {
         player2.isAttacking = false;
         player1.takeHit();
         updateHealthBar(player1, 'player1Health');
