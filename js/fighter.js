@@ -15,97 +15,185 @@ class Fighter {
                 x: this.position.x,
                 y: this.position.y
             },
-            width: 120,  // Increased attack range
-            height: 60   // Increased attack height
+            width: 120,
+            height: 60
         };
+        // Animation states
+        this.isHit = false;
+        this.hitRecoveryTime = 0;
+        this.punchProgress = 0;
+        this.isMoving = false;
+        this.animationFrame = 0;
     }
 
     drawStickman(ctx) {
-        const headRadius = 25;  // Increased head size
-        const bodyLength = 70;  // Increased body length
-        const limbLength = 50;  // Increased limb length
+        const headRadius = 25;
+        const bodyLength = 70;
+        const limbLength = 50;
         
-        // Calculate center position for the stickman
         const centerX = this.position.x + this.width / 2;
-        const headY = this.position.y + headRadius + 20; // Adjusted for bigger head
+        const headY = this.position.y + headRadius + 20;
         
-        // Draw filled head
+        // Apply hit effect shake
+        let drawX = centerX;
+        let drawY = headY;
+        if (this.isHit) {
+            drawX += Math.random() * 6 - 3;
+            drawY += Math.random() * 6 - 3;
+        }
+
+        // Fighting stance adjustment
+        const stanceOffset = this.isMoving ? Math.sin(this.animationFrame * 0.1) * 5 : 0;
+        const kneesBent = this.isMoving ? Math.abs(Math.sin(this.animationFrame * 0.1)) * 10 : 0;
+
+        // Draw filled head with white outline
         ctx.beginPath();
-        ctx.arc(centerX, headY, headRadius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
+        ctx.arc(drawX, drawY, headRadius, 0, Math.PI * 2);
+        ctx.fillStyle = this.isHit ? '#ffffff' : this.color; // Flash white when hit
         ctx.fill();
-        ctx.strokeStyle = 'white';  // White outline for contrast
+        ctx.strokeStyle = 'white';
         ctx.lineWidth = 4;
         ctx.stroke();
         
-        // Draw body
+        // Draw body with fighting stance
         ctx.strokeStyle = this.color;
         ctx.beginPath();
-        ctx.moveTo(centerX, headY + headRadius);
-        ctx.lineTo(centerX, headY + headRadius + bodyLength);
+        ctx.moveTo(drawX, drawY + headRadius);
+        ctx.lineTo(drawX + (this.facing === 'right' ? 5 : -5), drawY + headRadius + bodyLength);
         ctx.stroke();
         
-        // Draw legs
-        const hipY = headY + headRadius + bodyLength;
+        // Draw legs with animation
+        const hipY = drawY + headRadius + bodyLength;
+        
+        // Animate legs while moving
+        const leftLegAngle = this.isMoving ? 
+            Math.sin(this.animationFrame * 0.1) * 0.3 : 
+            (this.facing === 'right' ? -0.2 : 0.2);
+        const rightLegAngle = this.isMoving ? 
+            -Math.sin(this.animationFrame * 0.1) * 0.3 : 
+            (this.facing === 'right' ? 0.2 : -0.2);
+
         // Left leg
         ctx.beginPath();
-        ctx.moveTo(centerX, hipY);
-        ctx.lineTo(centerX - 25, hipY + limbLength);
+        ctx.moveTo(drawX, hipY);
+        ctx.lineTo(
+            drawX + Math.sin(leftLegAngle) * limbLength,
+            hipY + Math.cos(leftLegAngle) * limbLength + kneesBent
+        );
         ctx.stroke();
         
         // Right leg
         ctx.beginPath();
-        ctx.moveTo(centerX, hipY);
-        ctx.lineTo(centerX + 25, hipY + limbLength);
+        ctx.moveTo(drawX, hipY);
+        ctx.lineTo(
+            drawX + Math.sin(rightLegAngle) * limbLength,
+            hipY + Math.cos(rightLegAngle) * limbLength + kneesBent
+        );
         ctx.stroke();
         
-        // Draw arms
-        const shoulderY = headY + headRadius + 20;
+        // Draw arms with punch animation
+        const shoulderY = drawY + headRadius + 20;
         
-        // Attack animation for arms
         if (this.isAttacking) {
-            // Extended punching arm based on facing direction
+            const punchExtension = Math.sin(this.punchProgress * Math.PI) * 40;
+            
             if (this.facing === 'right') {
-                // Left arm normal
+                // Back arm (left)
                 ctx.beginPath();
-                ctx.moveTo(centerX, shoulderY);
-                ctx.lineTo(centerX - 30, shoulderY + 30);
+                ctx.moveTo(drawX, shoulderY);
+                ctx.lineTo(drawX - 30, shoulderY + 30);
                 ctx.stroke();
                 
-                // Right arm attacking
+                // Punching arm (right)
                 ctx.beginPath();
-                ctx.moveTo(centerX, shoulderY);
-                ctx.lineTo(centerX + 60, shoulderY);
+                ctx.moveTo(drawX, shoulderY);
+                const controlPoint1X = drawX + 30;
+                const controlPoint1Y = shoulderY - 10;
+                const controlPoint2X = drawX + 45;
+                const controlPoint2Y = shoulderY;
+                const endX = drawX + 60 + punchExtension;
+                const endY = shoulderY;
+                
+                ctx.moveTo(drawX, shoulderY);
+                ctx.bezierCurveTo(controlPoint1X, controlPoint1Y, controlPoint2X, controlPoint2Y, endX, endY);
+                ctx.stroke();
+                
+                // Draw fist
+                ctx.beginPath();
+                ctx.arc(endX, endY, 8, 0, Math.PI * 2);
+                ctx.fill();
                 ctx.stroke();
             } else {
-                // Right arm normal
+                // Back arm (right)
                 ctx.beginPath();
-                ctx.moveTo(centerX, shoulderY);
-                ctx.lineTo(centerX + 30, shoulderY + 30);
+                ctx.moveTo(drawX, shoulderY);
+                ctx.lineTo(drawX + 30, shoulderY + 30);
                 ctx.stroke();
                 
-                // Left arm attacking
+                // Punching arm (left)
                 ctx.beginPath();
-                ctx.moveTo(centerX, shoulderY);
-                ctx.lineTo(centerX - 60, shoulderY);
+                const controlPoint1X = drawX - 30;
+                const controlPoint1Y = shoulderY - 10;
+                const controlPoint2X = drawX - 45;
+                const controlPoint2Y = shoulderY;
+                const endX = drawX - (60 + punchExtension);
+                const endY = shoulderY;
+                
+                ctx.moveTo(drawX, shoulderY);
+                ctx.bezierCurveTo(controlPoint1X, controlPoint1Y, controlPoint2X, controlPoint2Y, endX, endY);
+                ctx.stroke();
+                
+                // Draw fist
+                ctx.beginPath();
+                ctx.arc(endX, endY, 8, 0, Math.PI * 2);
+                ctx.fill();
                 ctx.stroke();
             }
         } else {
-            // Normal arm position
-            ctx.beginPath();
-            ctx.moveTo(centerX, shoulderY);
-            ctx.lineTo(centerX - 30, shoulderY + 30);
-            ctx.stroke();
+            // Normal fighting stance arms
+            const armAngle = Math.PI / 6; // 30 degrees
+            const forearmLength = 35;
             
+            if (this.facing === 'right') {
+                // Back arm
+                ctx.beginPath();
+                ctx.moveTo(drawX, shoulderY);
+                ctx.lineTo(drawX - 20, shoulderY + 25);
+                ctx.stroke();
+                
+                // Front arm
+                ctx.beginPath();
+                ctx.moveTo(drawX, shoulderY);
+                ctx.lineTo(drawX + Math.cos(armAngle) * forearmLength, 
+                          shoulderY - Math.sin(armAngle) * forearmLength);
+                ctx.stroke();
+            } else {
+                // Back arm
+                ctx.beginPath();
+                ctx.moveTo(drawX, shoulderY);
+                ctx.lineTo(drawX + 20, shoulderY + 25);
+                ctx.stroke();
+                
+                // Front arm
+                ctx.beginPath();
+                ctx.moveTo(drawX, shoulderY);
+                ctx.lineTo(drawX - Math.cos(armAngle) * forearmLength, 
+                          shoulderY - Math.sin(armAngle) * forearmLength);
+                ctx.stroke();
+            }
+        }
+
+        // Draw hit effect
+        if (this.isHit) {
             ctx.beginPath();
-            ctx.moveTo(centerX, shoulderY);
-            ctx.lineTo(centerX + 30, shoulderY + 30);
+            ctx.arc(drawX, drawY, headRadius + 20, 0, Math.PI * 2);
+            ctx.strokeStyle = 'yellow';
+            ctx.lineWidth = 2;
             ctx.stroke();
         }
     }
 
     draw(ctx) {
-        // Draw stickman
         this.drawStickman(ctx);
         
         // Draw attack box when attacking
@@ -124,6 +212,25 @@ class Fighter {
     }
 
     update(ctx, opponent) {
+        // Update animation frame
+        this.animationFrame++;
+        
+        // Update punch animation
+        if (this.isAttacking) {
+            this.punchProgress = Math.min(1, this.punchProgress + 0.2);
+        } else {
+            this.punchProgress = Math.max(0, this.punchProgress - 0.2);
+        }
+
+        // Update hit state
+        if (this.isHit) {
+            this.hitRecoveryTime++;
+            if (this.hitRecoveryTime > 10) {
+                this.isHit = false;
+                this.hitRecoveryTime = 0;
+            }
+        }
+
         this.draw(ctx);
 
         // Store previous position for collision resolution
@@ -133,6 +240,9 @@ class Fighter {
         // Update position
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
+
+        // Set moving state
+        this.isMoving = this.velocity.x !== 0;
 
         // Apply gravity
         if (this.position.y + this.height + this.velocity.y >= GAME_CONFIG.canvas.height) {
@@ -150,7 +260,6 @@ class Fighter {
 
         // Check collision with opponent
         if (opponent && this.checkCollision(opponent)) {
-            // Revert to previous position if collision occurs
             this.position.x = prevX;
         }
 
@@ -179,11 +288,12 @@ class Fighter {
         if (!this.attackCooldown) {
             this.isAttacking = true;
             this.attackCooldown = true;
+            this.punchProgress = 0;
             
             // Attack duration
             setTimeout(() => {
                 this.isAttacking = false;
-            }, 200);
+            }, 300); // Increased duration for smoother animation
 
             // Attack cooldown
             setTimeout(() => {
@@ -195,5 +305,7 @@ class Fighter {
     takeHit() {
         this.health -= 20;
         if (this.health < 0) this.health = 0;
+        this.isHit = true;
+        this.hitRecoveryTime = 0;
     }
 } 
