@@ -200,6 +200,7 @@ function startGame() {
     if (!selectedStage) {
         selectedStage = 'Arena';
         document.getElementById('selectedStage').textContent = 'Arena';
+        console.log('No stage selected - defaulting to Arena');
     }
     
     // Initialize fighters based on selection
@@ -219,9 +220,9 @@ function startGame() {
         characterType: selectedCharacters.player2
     });
     
-    // Update health bar labels with character names
-    document.querySelector('#player1Selection + div span').textContent = selectedCharacters.player1;
-    document.querySelector('#player2Selection + div span').textContent = selectedCharacters.player2;
+    // Update health bar labels with character names (fixed selectors)
+    document.querySelector('.health-bars .health-bar-container:nth-child(1) span').textContent = selectedCharacters.player1 || 'Player 1';
+    document.querySelector('.health-bars .health-bar-container:nth-child(2) span').textContent = selectedCharacters.player2 || 'Player 2';
     
     // Set AI control for single-player mode
     isAIControlled = selectedMode === 'singleplayer';
@@ -300,6 +301,7 @@ function gameLoop() {
     
     // Draw background based on selected stage
     if (selectedStage && stages[selectedStage]) {
+        console.log('Rendering stage:', selectedStage);
         ctx.fillStyle = stages[selectedStage].backgroundColor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
@@ -311,7 +313,7 @@ function gameLoop() {
         ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
     } else {
         // Default background if no stage is selected
-        ctx.fillStyle = '#333';  // Lighter default gray
+        ctx.fillStyle = '#555';  // Even lighter gray for visibility
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         console.log('No stage selected, defaulting to gray background');
     }
