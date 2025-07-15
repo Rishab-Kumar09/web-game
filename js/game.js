@@ -196,9 +196,15 @@ function startGame() {
     updateRoundDisplay();
     updateScoreDisplay();
     
+    // Set a default stage if none is selected
+    if (!selectedStage) {
+        selectedStage = 'Arena';
+        document.getElementById('selectedStage').textContent = 'Arena';
+    }
+    
     // Initialize fighters based on selection
     player1 = new Fighter({
-        position: { x: 200, y: canvas.height - 100 },
+        position: { x: canvas.width * 0.2, y: canvas.height - 150 },
         velocity: { x: 0, y: 0 },
         color: characters[selectedCharacters.player1].color,
         facing: 'right',
@@ -206,7 +212,7 @@ function startGame() {
     });
     
     player2 = new Fighter({
-        position: { x: 600, y: canvas.height - 100 },
+        position: { x: canvas.width * 0.8, y: canvas.height - 150 },
         velocity: { x: 0, y: 0 },
         color: characters[selectedCharacters.player2].color,
         facing: 'left',
@@ -222,6 +228,9 @@ function startGame() {
     if (isAIControlled) {
         aiReactionTimer = difficulties[selectedDifficulty].reactionTime;
     }
+    
+    // Debug log to confirm game start
+    console.log('Game started with stage:', selectedStage, 'and characters:', selectedCharacters);
     
     // Start game loop
     gameLoop();
@@ -348,6 +357,9 @@ const keys = {
 function gameLoop() {
     if (gameState !== 'playing') return;
     
+    // Debug log to confirm game loop is running
+    console.log('Game loop running, state:', gameState);
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // Draw background based on selected stage
@@ -365,6 +377,7 @@ function gameLoop() {
         // Default background if no stage is selected
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        console.log('No stage selected, defaulting to black background');
     }
     
     // Update fighters
