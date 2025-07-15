@@ -320,10 +320,18 @@ function gameLoop() {
     player1.update(player2);
     player2.update(player1);
     
+    // Apply boundary checks to keep fighters within canvas
+    applyBoundaries(player1);
+    applyBoundaries(player2);
+    
     // AI control for Player 2 in single-player mode
     if (isAIControlled && !isRoundOver && !matchOver) {
         handleAIBehavior(player2, player1);
     }
+    
+    // Debug log positions before drawing
+    console.log('Drawing player1 at', player1.position);
+    console.log('Drawing player2 at', player2.position);
     
     // Draw fighters
     player1.draw(ctx);
@@ -423,6 +431,20 @@ function gameLoop() {
     }
     
     requestAnimationFrame(gameLoop);
+}
+
+// Function to apply boundaries to a fighter
+function applyBoundaries(fighter) {
+    if (fighter.position.x < 0) fighter.position.x = 0;
+    if (fighter.position.x + fighter.width > canvas.width) fighter.position.x = canvas.width - fighter.width;
+    if (fighter.position.y + fighter.height > canvas.height) {
+        fighter.position.y = canvas.height - fighter.height;
+        fighter.velocity.y = 0;
+    }
+    if (fighter.position.y < 0) {
+        fighter.position.y = 0;
+        fighter.velocity.y = 0;
+    }
 }
 
 // Function to handle AI behavior for Player 2

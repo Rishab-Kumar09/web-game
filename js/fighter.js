@@ -132,18 +132,6 @@ class Fighter {
         this.position.y += this.velocity.y;
         this.position.x += this.velocity.x;
 
-        // Keep within canvas bounds
-        if (this.position.x < 0) this.position.x = 0;
-        if (this.position.x + this.width > canvas.width) this.position.x = canvas.width - this.width;
-        if (this.position.y + this.height > canvas.height) {
-            this.position.y = canvas.height - this.height;
-            this.velocity.y = 0;
-        }
-        if (this.position.y < 0) {
-            this.position.y = 0;
-            this.velocity.y = 0;
-        }
-
         // Update animation state
         this.isMoving = Math.abs(this.velocity.x) > 0;
         this.animationFrame++;
