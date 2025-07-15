@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="game-container">
-        <canvas id="gameCanvas" width="800" height="400"></canvas>
-        <div class="game-ui">
+        <canvas id="gameCanvas" width="800" height="400" style="display: none;"></canvas>
+        <div class="game-ui" id="gameUI" style="display: none;">
             <div class="health-bars">
                 <div class="health-bar-container">
                     <div id="player1Health" class="health-bar" style="width: 100%;"></div>
@@ -20,9 +20,107 @@
                     <span>Player 2</span>
                 </div>
             </div>
+            <div class="score-board">
+                <div class="score" id="player1Score">0</div>
+                <div class="round-info" id="roundInfo">Round 1</div>
+                <div class="score" id="player2Score">0</div>
+            </div>
             <div id="gameStatus"></div>
         </div>
+        <div id="characterSelection" class="selection-screen">
+            <h1>Choose Your Fighter & Stage</h1>
+            <div class="selection-container">
+                <div class="player-selection" id="player1Selection">
+                    <h2>Player 1</h2>
+                    <div class="character-list">
+                        <div class="character-option" data-character="Warrior" onclick="selectCharacter(1, 'Warrior')">
+                            <div class="character-preview" style="background-color: #ff4444;"></div>
+                            <span>Warrior</span>
+                        </div>
+                        <div class="character-option" data-character="Ninja" onclick="selectCharacter(1, 'Ninja')">
+                            <div class="character-preview" style="background-color: #4444ff;"></div>
+                            <span>Ninja</span>
+                        </div>
+                        <div class="character-option" data-character="Samurai" onclick="selectCharacter(1, 'Samurai')">
+                            <div class="character-preview" style="background-color: #44ff44;"></div>
+                            <span>Samurai</span>
+                        </div>
+                    </div>
+                    <div class="selected-character" id="player1Selected">Select a fighter</div>
+                </div>
+                <div class="player-selection" id="player2Selection">
+                    <h2>Player 2</h2>
+                    <div class="character-list">
+                        <div class="character-option" data-character="Warrior" onclick="selectCharacter(2, 'Warrior')">
+                            <div class="character-preview" style="background-color: #ff4444;"></div>
+                            <span>Warrior</span>
+                        </div>
+                        <div class="character-option" data-character="Ninja" onclick="selectCharacter(2, 'Ninja')">
+                            <div class="character-preview" style="background-color: #4444ff;"></div>
+                            <span>Ninja</span>
+                        </div>
+                        <div class="character-option" data-character="Samurai" onclick="selectCharacter(2, 'Samurai')">
+                            <div class="character-preview" style="background-color: #44ff44;"></div>
+                            <span>Samurai</span>
+                        </div>
+                    </div>
+                    <div class="selected-character" id="player2Selected">Select a fighter</div>
+                </div>
+            </div>
+            <div class="stage-selection">
+                <h2>Select Stage</h2>
+                <div class="stage-list">
+                    <div class="stage-option" data-stage="Arena" onclick="selectStage('Arena')">
+                        <div class="stage-preview" style="background-color: #666;"></div>
+                        <span>Arena</span>
+                    </div>
+                    <div class="stage-option" data-stage="Temple" onclick="selectStage('Temple')">
+                        <div class="stage-preview" style="background-color: #886644;"></div>
+                        <span>Temple</span>
+                    </div>
+                    <div class="stage-option" data-stage="Forest" onclick="selectStage('Forest')">
+                        <div class="stage-preview" style="background-color: #448844;"></div>
+                        <span>Forest</span>
+                    </div>
+                </div>
+                <div class="selected-stage" id="selectedStage">Select a stage</div>
+            </div>
+            <div class="mode-selection">
+                <h2>Select Mode</h2>
+                <div class="mode-list">
+                    <div class="mode-option" data-mode="multiplayer" onclick="selectMode('multiplayer')">
+                        <div class="mode-preview" style="background-color: #666;"></div>
+                        <span>Multiplayer</span>
+                    </div>
+                    <div class="mode-option" data-mode="singleplayer" onclick="selectMode('singleplayer')">
+                        <div class="mode-preview" style="background-color: #666;"></div>
+                        <span>Single Player</span>
+                    </div>
+                </div>
+                <div class="selected-mode" id="selectedMode">Select a mode</div>
+            </div>
+            <div class="difficulty-selection" id="difficultySelection" style="display: none;">
+                <h2>Select Difficulty</h2>
+                <div class="difficulty-list">
+                    <div class="difficulty-option" data-difficulty="easy" onclick="selectDifficulty('easy')">
+                        <div class="difficulty-preview" style="background-color: #44aa44;"></div>
+                        <span>Easy</span>
+                    </div>
+                    <div class="difficulty-option" data-difficulty="medium" onclick="selectDifficulty('medium')">
+                        <div class="difficulty-preview" style="background-color: #aaaa44;"></div>
+                        <span>Medium</span>
+                    </div>
+                    <div class="difficulty-option" data-difficulty="hard" onclick="selectDifficulty('hard')">
+                        <div class="difficulty-preview" style="background-color: #aa4444;"></div>
+                        <span>Hard</span>
+                    </div>
+                </div>
+                <div class="selected-difficulty" id="selectedDifficulty">Select a difficulty</div>
+            </div>
+            <button id="startGame" onclick="startGame()" disabled>Start Game</button>
+        </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script src="js/game.js"></script>
 </body>
 </html> 
