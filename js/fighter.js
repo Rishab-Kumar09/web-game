@@ -201,93 +201,53 @@ class Fighter {
             (this.currentStance === 'high' ? 4 :
              this.currentStance === 'low' ? 2 : 3) : 0;
         
-        // Draw sword grip with momentum
+        // Draw sword arm
         ctx.beginPath();
-        ctx.strokeStyle = '#8B4513';
-        ctx.lineWidth = 6;
-        ctx.moveTo(handX, handY);
-        ctx.lineTo(
-            handX + Math.cos(this.swordAngle) * (swordConfig.gripLength + momentumOffset) * (this.facing === 'right' ? 1 : -1),
-            handY + Math.sin(this.swordAngle) * (swordConfig.gripLength + momentumOffset)
-        );
-        ctx.stroke();
-        
-        // Draw sword guard with momentum
-        const guardLength = 15 + (momentumOffset * 0.5);
-        const guardAngle = this.swordAngle + Math.PI/2;
-        const guardX = handX + Math.cos(this.swordAngle) * swordConfig.gripLength * (this.facing === 'right' ? 1 : -1);
-        const guardY = handY + Math.sin(this.swordAngle) * swordConfig.gripLength;
-        
-        ctx.beginPath();
-        ctx.strokeStyle = '#C0C0C0';
-        ctx.lineWidth = 4;
-        ctx.moveTo(guardX - Math.cos(guardAngle) * guardLength, guardY - Math.sin(guardAngle) * guardLength);
-        ctx.lineTo(guardX + Math.cos(guardAngle) * guardLength, guardY + Math.sin(guardAngle) * guardLength);
-        ctx.stroke();
-        
-        // Draw sword blade with momentum and trail effect
-        if (this.isAttacking && this.swingProgress > 0.2) {
-            // Draw swing trail
-            const trailAlpha = Math.min(0.6, this.swingProgress);
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${trailAlpha})`;
-            ctx.lineWidth = 2;
-            
-            const trailPoints = 5;
-            for (let i = 0; i < trailPoints; i++) {
-                const trailProgress = this.swingProgress - (i * 0.1);
-                if (trailProgress > 0) {
-                    let trailAngle;
-                    switch (this.swingType) {
-                        case 'horizontal':
-                            trailAngle = this.facing === 'right'
-                                ? -Math.PI/4 + (Math.PI * 1.5) * trailProgress
-                                : -Math.PI * 0.75 - (Math.PI * 1.5) * trailProgress;
-                            break;
-                        case 'vertical':
-                            trailAngle = this.facing === 'right'
-                                ? -Math.PI/2 + Math.PI * trailProgress
-                                : -Math.PI/2 - Math.PI * trailProgress;
-                            break;
-                        case 'diagonal':
-                            trailAngle = this.facing === 'right'
-                                ? -Math.PI/3 + (Math.PI * 1.2) * trailProgress
-                                : -Math.PI * 0.6 - (Math.PI * 1.2) * trailProgress;
-                            break;
-                    }
-                    
-                    ctx.moveTo(guardX, guardY);
-                    ctx.lineTo(
-                        guardX + Math.cos(trailAngle) * swordConfig.length * (this.facing === 'right' ? 1 : -1),
-                        guardY + Math.sin(trailAngle) * swordConfig.length
-                    );
-                }
-            }
-            ctx.stroke();
-        }
-        
-        // Draw main blade
-        ctx.beginPath();
-        ctx.strokeStyle = '#C0C0C0';
-        ctx.lineWidth = swordConfig.width;
-        ctx.moveTo(guardX, guardY);
-        ctx.lineTo(
-            guardX + Math.cos(this.swordAngle) * (swordConfig.length + momentumOffset) * (this.facing === 'right' ? 1 : -1),
-            guardY + Math.sin(this.swordAngle) * (swordConfig.length + momentumOffset)
-        );
-        ctx.stroke();
-        
-        // Draw blade edge highlight
-        ctx.beginPath();
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 1;
-        ctx.moveTo(guardX, guardY);
-        ctx.lineTo(
-            guardX + Math.cos(this.swordAngle) * (swordConfig.length + momentumOffset) * (this.facing === 'right' ? 1 : -1),
-            guardY + Math.sin(this.swordAngle) * (swordConfig.length + momentumOffset)
-        );
+        ctx.moveTo(centerX, shoulderY);
+        ctx.lineTo(handX, handY);
         ctx.stroke();
 
+        // Draw grip
+        ctx.beginPath();
+        ctx.moveTo(handX, handY);
+        ctx.lineTo(guardX, guardY);
+        ctx.lineWidth = swordConfig.width * 1.5;
+        ctx.strokeStyle = 'brown'; // Grip color
+        ctx.stroke();
+
+        // Draw guard
+        ctx.beginPath();
+        ctx.ellipse(guardX, guardY, swordConfig.width * 2, swordConfig.width, 
+            this.swordAngle + (Math.PI / 2), 0, Math.PI * 2);
+        ctx.fillStyle = 'gold';
+        ctx.fill();
+
+        // Draw blade
+        const tipX = guardX + Math.cos(this.swordAngle) * swordConfig.length * (this.facing === 'right' ? 1 : -1);
+        const tipY = guardY + Math.sin(this.swordAngle) * swordConfig.length;
+        ctx.beginPath();
+        ctx.moveTo(guardX, guardY);
+        ctx.lineTo(tipX, tipY);
+        ctx.lineWidth = swordConfig.width;
+        ctx.strokeStyle = 'silver';
+        ctx.stroke();
+
+        // Draw blade highlight
+        ctx.beginPath();
+        ctx.moveTo(guardX + Math.cos(this.swordAngle + 0.1) * 2, guardY + Math.sin(this.swordAngle + 0.1) * 2);
+        ctx.lineTo(tipX + Math.cos(this.swordAngle + 0.1) * 2, tipY + Math.sin(this.swordAngle + 0.1) * 2);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'white';
+        ctx.stroke();
+
+        // If attacking, draw swing trail
+        if (this.isAttacking) {
+            ctx.beginPath();
+            ctx.arc(tipX, tipY, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.fill();
+        }
+        
         // Add stance-specific visual effects
         if (!this.isAttacking && !this.isBlocking) {
             // Draw stance indicator
@@ -306,9 +266,9 @@ class Fighter {
 
     drawStickman(ctx) {
         // Base dimensions
-        const headRadius = 20;
-        const bodyLength = 50;
-        const limbLength = 40;
+        const headRadius = 30;
+        const bodyLength = 80;
+        const limbLength = 60;
         
         // Calculate center position
         const centerX = this.position.x + this.width / 2;
@@ -346,6 +306,18 @@ class Fighter {
             feetY
         );
         ctx.stroke();
+
+        // Left foot
+        ctx.beginPath();
+        ctx.arc(centerX - Math.sin(legSwing - 0.2) * limbLength, feetY, 8, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+
+        // Right foot
+        ctx.beginPath();
+        ctx.arc(centerX + Math.sin(legSwing + Math.PI) * limbLength, feetY, 8, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
         
         // Draw body
         ctx.beginPath();
@@ -524,6 +496,15 @@ class Fighter {
         // Update guard health regeneration
         if (this.guardHealth < this.maxGuardHealth && !this.isBlocking) {
             this.guardHealth = Math.min(this.maxGuardHealth, this.guardHealth + 0.1);
+        }
+
+        // Add gravity
+        this.velocity.y += GAME_CONFIG.fighter.gravity;
+
+        // Ground collision
+        if (this.position.y + this.height >= GAME_CONFIG.canvas.height) {
+            this.position.y = GAME_CONFIG.canvas.height - this.height;
+            this.velocity.y = 0;
         }
     }
 
