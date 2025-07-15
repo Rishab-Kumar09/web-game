@@ -57,8 +57,12 @@ function animate() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Update players
-    player1.update(ctx, player2);
-    player2.update(ctx, player1);
+    player1.update(player2);
+    player2.update(player1);
+    
+    // Draw players
+    player1.draw(ctx);
+    player2.draw(ctx);
 
     // Player 1 movement
     player1.velocity.x = 0;

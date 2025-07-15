@@ -474,6 +474,59 @@ class Fighter {
         });
     }
 
+    update(opponent) {
+        // Update position
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+        
+        // Keep player within canvas bounds
+        if (this.position.x < 0) this.position.x = 0;
+        if (this.position.x + this.width > GAME_CONFIG.canvas.width) {
+            this.position.x = GAME_CONFIG.canvas.width - this.width;
+        }
+        
+        // Update facing direction based on opponent position
+        if (opponent.position.x < this.position.x) {
+            this.facing = 'left';
+        } else if (opponent.position.x > this.position.x) {
+            this.facing = 'right';
+        }
+        
+        // Update movement state
+        this.isMoving = Math.abs(this.velocity.x) > 0;
+        
+        // Update animation frame
+        this.animationFrame++;
+        
+        // Update hit recovery
+        if (this.isHit) {
+            this.hitRecoveryTime++;
+            if (this.hitRecoveryTime > 30) {
+                this.isHit = false;
+                this.hitRecoveryTime = 0;
+            }
+        }
+        
+        // Update swing animation
+        if (this.isAttacking) {
+            this.swingProgress += 0.05;
+            if (this.swingProgress >= 1) {
+                this.recoveryPhase = true;
+                this.swingProgress = Math.max(0, this.swingProgress - 0.08);
+            }
+        }
+        
+        // Regenerate stamina
+        if (this.stamina < this.maxStamina) {
+            this.stamina = Math.min(this.maxStamina, this.stamina + this.staminaRegenRate);
+        }
+        
+        // Update guard health regeneration
+        if (this.guardHealth < this.maxGuardHealth && !this.isBlocking) {
+            this.guardHealth = Math.min(this.maxGuardHealth, this.guardHealth + 0.1);
+        }
+    }
+
     draw(ctx) {
         // Draw hit stun effect
         if (this.hitStunned) {
