@@ -31,31 +31,31 @@ const characters = {
 // Stage data
 const stages = {
     Arena: { 
-        backgroundColor: '#444',
-        groundColor: '#666',
+        backgroundColor: '#666',  // Lighter gray
+        groundColor: '#888',
         details: function(ctx) {
             // Arena details like crowd or pillars
-            ctx.fillStyle = '#555';
+            ctx.fillStyle = '#777';
             ctx.fillRect(0, 0, canvas.width, 50); // Top border
             ctx.fillRect(0, canvas.height - 50, canvas.width, 50); // Bottom border
         }
     },
     Temple: { 
-        backgroundColor: '#553300',
-        groundColor: '#886644',
+        backgroundColor: '#774400',  // Lighter brown
+        groundColor: '#aa8855',
         details: function(ctx) {
             // Temple details like pillars or lanterns
-            ctx.fillStyle = '#331100';
+            ctx.fillStyle = '#442200';
             ctx.fillRect(100, 100, 50, canvas.height - 150); // Left pillar
             ctx.fillRect(canvas.width - 150, 100, 50, canvas.height - 150); // Right pillar
         }
     },
     Forest: { 
-        backgroundColor: '#225522',
-        groundColor: '#448844',
+        backgroundColor: '#337733',  // Lighter green
+        groundColor: '#55aa55',
         details: function(ctx) {
             // Forest details like trees
-            ctx.fillStyle = '#114411';
+            ctx.fillStyle = '#226622';
             ctx.fillRect(50, 50, 30, canvas.height - 100); // Left tree
             ctx.fillRect(canvas.width - 80, 50, 30, canvas.height - 100); // Right tree
         }
@@ -279,70 +279,6 @@ function checkMatchWinner() {
     return false;
 }
 
-// Include Fighter class (assuming it's in a separate file)
-// For now, we'll define it here for simplicity
-class Fighter {
-    constructor({ position, velocity, color, facing }) {
-        this.position = position;
-        this.velocity = velocity;
-        this.color = color;
-        this.facing = facing;
-        this.width = 50;
-        this.height = 100;
-        this.isAttacking = false;
-        this.attackBox = {
-            width: 100,
-            height: 50
-        };
-        this.health = 100;
-    }
-
-    draw(ctx) {
-        ctx.fillStyle = this.color;
-        // Body
-        ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
-        // Head
-        ctx.fillRect(this.position.x + this.width / 2 - 10, this.position.y - 20, 20, 20);
-        // Attack box (visible when attacking)
-        if (this.isAttacking) {
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-            const attackX = this.facing === 'right' ? this.position.x + this.width : this.position.x - this.attackBox.width;
-            ctx.fillRect(attackX, this.position.y + this.height * 0.3, this.attackBox.width, this.attackBox.height);
-        }
-    }
-
-    update(opponent) {
-        // Apply gravity
-        this.velocity.y += 0.5;
-        this.position.y += this.velocity.y;
-        this.position.x += this.velocity.x;
-
-        // Keep within canvas bounds
-        if (this.position.x < 0) this.position.x = 0;
-        if (this.position.x + this.width > canvas.width) this.position.x = canvas.width - this.width;
-        if (this.position.y + this.height > canvas.height) {
-            this.position.y = canvas.height - this.height;
-            this.velocity.y = 0;
-        }
-        if (this.position.y < 0) {
-            this.position.y = 0;
-            this.velocity.y = 0;
-        }
-    }
-
-    attack() {
-        this.isAttacking = true;
-        setTimeout(() => {
-            this.isAttacking = false;
-        }, 100);
-    }
-
-    takeHit() {
-        this.health -= 10;
-        if (this.health < 0) this.health = 0;
-    }
-}
-
 // Keyboard controls
 const keys = {
     a: { pressed: false },
@@ -375,9 +311,9 @@ function gameLoop() {
         ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
     } else {
         // Default background if no stage is selected
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = '#333';  // Lighter default gray
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        console.log('No stage selected, defaulting to black background');
+        console.log('No stage selected, defaulting to gray background');
     }
     
     // Update fighters
