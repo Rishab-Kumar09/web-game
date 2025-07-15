@@ -5,19 +5,23 @@
 }
 
 body {
-    background-color: #1a1a1a;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    font-family: 'Press Start 2P', system-ui, -apple-system, sans-serif;
+    height: 100vh;
+    background-color: #333;
+}
+
+canvas {
+    border: 2px solid #fff;
 }
 
 .game-container {
     position: relative;
-    width: 1024px;
-    height: 576px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    width: 800px;
+    height: 400px;
 }
 
 #gameCanvas {
@@ -28,43 +32,56 @@ body {
 
 .game-ui {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    top: 10px;
+    left: 10px;
+    width: 780px;
 }
 
 .health-bars {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    width: 100%;
 }
 
-.health-bar {
-    width: 400px;
+.health-bar-container {
+    width: 300px;
     height: 30px;
-    background: #333;
-    border: 3px solid #fff;
+    background-color: #555;
+    border: 2px solid #fff;
     position: relative;
 }
 
-.health-bar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
+.health-bar {
     height: 100%;
-    width: var(--health-percentage, 100%);
-    background: #ff3333;
+    background-color: #ff4444;
     transition: width 0.3s ease;
 }
 
-#gameStatus {
-    text-align: center;
+.health-bar-container:nth-child(2) .health-bar {
+    background-color: #4444ff;
+}
+
+.health-bar-container span {
+    position: absolute;
+    top: 5px;
+    right: 10px;
     color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+#gameStatus {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: Arial, sans-serif;
     font-size: 24px;
-    text-shadow: 2px 2px #000;
-    margin-top: 20px;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: none;
 } 

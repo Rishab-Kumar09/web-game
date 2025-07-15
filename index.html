@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Kombat</title>
+    <title>Stickman Brawl</title>
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
     <div class="game-container">
-        <canvas id="gameCanvas"></canvas>
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
         <div class="game-ui">
             <div class="health-bars">
-                <div id="player1Health" class="health-bar"></div>
-                <div id="player2Health" class="health-bar"></div>
+                <div class="health-bar-container">
+                    <div id="player1Health" class="health-bar" style="width: 100%;"></div>
+                    <span>Player 1</span>
+                </div>
+                <div class="health-bar-container">
+                    <div id="player2Health" class="health-bar" style="width: 100%;"></div>
+                    <span>Player 2</span>
+                </div>
             </div>
             <div id="gameStatus"></div>
         </div>
     </div>
-    
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/fighter.js"></script>
     <script src="js/game.js"></script>
 </body>
 </html> 
